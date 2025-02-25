@@ -1,0 +1,25 @@
+{
+  "name": "commit.io",
+  "version": "1.0.0",
+  "description": "Commit.oi é uma rede social para desenvolvedores, onde é possível criar perfis, compartilhar posts e snippets de código, interagir com outros devs através de curtidas e comentários, e utilizar um chat em tempo real. O projeto será desenvolvido com uma stack JavaScript moderna e baseada em microsserviços.",
+  "main": "index.js",
+  "workspaces": [
+    "apps/services/*",
+    "apps/web/",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedro5g/commit.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pedro5g/commit.io/issues"
+  },
+  "homepage": "https://github.com/pedro5g/commit.io#readme"
+}
