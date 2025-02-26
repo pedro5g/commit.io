@@ -3,13 +3,23 @@
   "version": "1.0.0",
   "description": "Commit.oi é uma rede social para desenvolvedores, onde é possível criar perfis, compartilhar posts e snippets de código, interagir com outros devs através de curtidas e comentários, e utilizar um chat em tempo real. O projeto será desenvolvido com uma stack JavaScript moderna e baseada em microsserviços.",
   "main": "index.js",
+  "type": "module",
+  "private": true,
   "workspaces": [
     "apps/services/*",
     "apps/web/",
     "packages/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf apps/services/**/dist packages/**/dist & rm apps/services/**/tsconfig.tsbuildinfo packages/**/tsconfig.tsbuildinfo",
+    "build": "npm run clean & npm run build:shared & npm run build:services",
+    "build:shared": "npm run build -w packages/shared",
+    "build:services": "npm run build -w apps/services/users",
+    "dev": "sh dev.sh",
+    "start:dev": "npm run dev:users",
+    "dev:users": "tsc -w -p apps/services/users/tsconfig.json & tsx watch apps/services/users/dist/index.js",
+    "lint": "eslint . --ignore-pattern 'build'",
+    "lint:fix": "eslint . --fix --ignore-pattern 'build'"
   },
   "repository": {
     "type": "git",
@@ -21,5 +31,17 @@
   "bugs": {
     "url": "https://github.com/pedro5g/commit.io/issues"
   },
-  "homepage": "https://github.com/pedro5g/commit.io#readme"
+  "homepage": "https://github.com/pedro5g/commit.io#readme",
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "eslint": "^9.21.0",
+    "prettier": "^3.5.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.25.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
+  }
 }
