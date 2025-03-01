@@ -25,9 +25,6 @@ commit.oi/
 │── packages/                  # Pacotes reutilizáveis
 │   ├── shared/                # Código compartilhado (modelos, utilitários, middlewares)
 │   ├── config/                # Configurações globais (variáveis de ambiente)
-│── infra/                     # Infraestrutura (Docker, Prisma)
-│   ├── docker/                # Configurações do Docker para os serviços
-│   ├── database/              # Migrations e configurações do banco
 │── docs/                      # Documentação do projeto
 │── .env.example               # Exemplo de variáveis de ambiente
 │── package.json               # Configuração do monorepo

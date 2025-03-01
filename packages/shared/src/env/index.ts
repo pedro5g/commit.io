@@ -1,10 +1,10 @@
 import path from "node:path"
 import { z } from "zod"
-import { logger } from "@commit.oi/shared/src/logger"
+import { logger } from "../logger"
 import { config } from "dotenv"
-import { __dirname } from "../dirname"
+import { dirname } from "../dirname"
 
-config({ path: path.resolve(__dirname, ".env") })
+config({ path: path.resolve(dirname, ".env") })
 
 const envSchema = z.object({
   USER_PORT: z.coerce.number(),
