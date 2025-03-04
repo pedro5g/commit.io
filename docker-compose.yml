@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  postgres:
+    container_name: postgres_commit.io
+    image: bitnami/postgresql:latest
+    ports:
+      - 5432:${PG_DATABASE_PORT}
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER= ${PG_DATABASE_USERNAME}
+      - POSTGRES_PASSWORD= ${PG_DATABASE_PASSWORD}
+      - POSTGRES_DB= ${PG_DATABASE_NAME}
+    volumes:
+      - ./data/pg:/data/postgres

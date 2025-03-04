@@ -1,15 +1,14 @@
-import { asyncHandler, env, express, logger } from "@commit.oi/shared"
+import { cookieParser, cors, env, express, logger } from "@commit.oi/shared"
+
+const { USER_PORT, APP_ORIGEM, NODE_ENV } = env
+
 const app = express()
 
-app.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    res.json({ message: "Server is running " })
-  }),
-)
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cors({ origin: APP_ORIGEM, credentials: true }))
+app.use(cookieParser())
 
-const PORT = env.USER_PORT
-
-app.listen(PORT, () => {
-  logger.info(`User server is running at PORT ${PORT} 🚀🚀`)
+app.listen(USER_PORT, () => {
+  logger.info(`User server is running at PORT ${USER_PORT} on ${NODE_ENV} mode 🚀🚀`)
 })
