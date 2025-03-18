@@ -13,3 +13,16 @@ services:
       - POSTGRES_DB= ${PG_DATABASE_NAME}
     volumes:
       - ./data/pg:/data/postgres
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: nodejs-rabbitmq-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - 15672:${RABBITMQ_ADMIN_PORT}
+      - 5672:${RABBITMQ_PORT}
+    volumes:
+      - "./.rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}

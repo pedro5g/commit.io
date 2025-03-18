@@ -1,0 +1,17 @@
+{
+  "name": "@commit.oi/notifications",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "@commit.oi/shared": "*",
+    "resend": "^4.1.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

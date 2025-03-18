@@ -1,0 +1,22 @@
+@baseURL = http://localhost:3000/api/v1/user
+
+### @name register_by_email
+POST {{baseURL}}/register/email
+Content-Type: application/json
+
+{
+    "userName": "pedro",
+    "email": "test@gmail.com",
+    "password": "123456"
+}
+
+
+### @name login_by_email
+
+POST {{baseURL}}/login
+Content-Type: application/json
+
+{
+    "email": "pedluiz321@gmail.com",
+    "password": "123456"
+}
