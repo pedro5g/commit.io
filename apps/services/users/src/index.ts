@@ -1,15 +1,59 @@
-import { asyncHandler, env, express, logger } from "@commit.oi/shared"
+import {
+  cookieParser,
+  cors,
+  env,
+  express,
+  globalErrorHandler,
+  logger,
+  RMQMessagesService,
+} from "@commit.oi/shared"
+import { userRoutes } from "./routes"
+import {
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+} from "./utils"
+
+declare global {
+  namespace Express {
+    export interface Response {
+      setAuthCookies: (data: {
+        accessToken: string
+        refreshToken: string
+      }) => express.Response
+    }
+  }
+}
+
+const { USER_PORT, APP_ORIGEM, NODE_ENV, PREFIX_URL } = env
+
 const app = express()
 
-app.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    res.json({ message: "Server is running " })
-  }),
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cors({ origin: APP_ORIGEM, credentials: true }))
+app.use(cookieParser())
+
+app.use((req, res, next) => {
+  res.setAuthCookies = ({ accessToken, refreshToken }) => {
+    res
+      .cookie("assessToken", accessToken, getAccessTokenCookieOptions())
+      .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions())
+
+    return res
+  }
+  next()
+})
+app.use(`${PREFIX_URL}/user`, userRoutes)
+
+app.use(globalErrorHandler)
+
+export const rmqMessageService = new RMQMessagesService(
+  env.RABBITMQ_CONNECTION_URL,
 )
 
-const PORT = env.USER_PORT
-
-app.listen(PORT, () => {
-  logger.info(`User server is running at PORT ${PORT} 🚀🚀`)
+app.listen(USER_PORT, async () => {
+  await rmqMessageService.start()
+  logger.info(
+    `User server is running at PORT ${USER_PORT} on ${NODE_ENV} mode 🚀🚀`,
+  )
 })

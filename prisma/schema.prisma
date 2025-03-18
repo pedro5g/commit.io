@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  userName        String    @map("user_name")
+  email           String    @unique
+  password        String?
+  bio             String?
+  isEmailVerified Boolean   @default(false) @map("is_email_verified")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt() @map("updated_at")
+  lastLogin       DateTime? @map("last_login")
+
+  accounts Account[]
+  Code     Code[]
+
+  @@map("users")
+}
+
+enum PROVIDERS {
+  EMAIL
+  GOOGLE
+  GITHUB
+
+  @@map("providers_types")
+}
+
+model Account {
+  id         String    @default(cuid())
+  userId     String    @map("user_id")
+  provider   PROVIDERS
+  providerId String    @map("provider_id")
+  avatarUrl  String?   @map("avatar_url")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt() @map("updated_at")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@map("accounts")
+}
+
+enum CODES {
+  EMAIL_VERIFY
+  RESET_PASSWORD
+
+  @@map("code_types")
+}
+
+model Code {
+  id     Int    @id @default(autoincrement())
+  userId String @map("user_id")
+
+  code String @unique
+  type CODES
+
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("codes")
+}

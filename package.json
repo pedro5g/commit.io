@@ -19,7 +19,10 @@
     "start:dev": "npm run dev:users",
     "dev:users": "tsc -w -p apps/services/users/tsconfig.json & tsx watch apps/services/users/dist/index.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "migrate:dev": "npx prisma migrate dev --schema=prisma/schema.prisma -- -w packages/shared",
+    "studio": "npx prisma studio -- -w packages/shared",
+    "test": "sh test.sh"
   },
   "repository": {
     "type": "git",
@@ -42,6 +45,7 @@
     "typescript-eslint": "^8.25.0"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.1",
     "dotenv": "^16.4.7",
     "zod": "^3.24.2"
   }
