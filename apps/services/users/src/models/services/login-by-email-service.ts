@@ -5,62 +5,103 @@ import {
   refreshTokenSignOptions,
   signJwtToken,
   logger,
+  AuthProviders,
+  Codes,
+  env,
+  EmailMethods,
 } from "@commit.oi/shared"
 import { LoginByEmailDTO } from "../dtos/register-user-by-email-dto"
-import { AccountQuery } from "../types/account"
-import { messageServer } from "../.."
+import { genRandomCode } from "../../utils"
+import { rmqMessageService } from "../../broker"
 
 export const loginByEmailService = async ({
   email,
   password,
 }: LoginByEmailDTO) => {
-  const [account] = await prisma.$queryRawUnsafe<AccountQuery[]>(
-    `
-    SELECT  a."id" AS "accountId", a."email", a."avatar_url", 
-    a."is_email_verified", a."provider", a."password", a."user_id",
-    u."id", u."user_name", u."bio"  
-    FROM "accounts" AS a JOIN "users" AS u ON a."user_id" = u."id" 
-    WHERE a."email" = $1 LIMIT 1;
-  `,
-    email,
-  )
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      userName: true,
+      email: true,
+      password: true,
+      bio: true,
+      isEmailVerified: true,
+      accounts: {
+        where: {
+          provider: AuthProviders.EMAIL,
+        },
+        select: {
+          id: true,
+          provider: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  })
 
-  if (!account) {
+  if (!user) {
     throw new BadRequestException("Invalid email or password")
   }
 
-  if (!account.is_email_verified) {
-    const ok = await messageServer.publishInQueue(
-      "confirm-email",
-      account.email,
-    )
+  if (!user.password) {
+    throw new BadRequestException(`Please use social login`)
+  }
 
-    if (ok) logger.info(`Message publish on [confirm-email] queue`)
-    if (!ok) logger.error(`Error to publish message on [confirm-email] queue`)
+  if (!user.isEmailVerified) {
+    let url = ""
+    const verifyCode = await prisma.code.findFirst({
+      where: {
+        userId: user.id,
+        type: Codes.EMAIL_VERIFY,
+      },
+      select: {
+        code: true,
+      },
+    })
+    if (env.NODE_ENV !== "test") {
+      if (!verifyCode) {
+        const code = genRandomCode()
+        await prisma.code.create({
+          data: {
+            userId: user.id,
+            code,
+            type: Codes.EMAIL_VERIFY,
+          },
+        })
+        url = `${env.APP_ORIGEM}/confirm-account?code=${code}`
+      } else {
+        url = `${env.APP_ORIGEM}/confirm-account?code=${verifyCode.code}`
+      }
 
+      const ok = await rmqMessageService.publishInQueue(
+        EmailMethods.SEND_EMAIL_VERIFY,
+        JSON.stringify({
+          email,
+          url,
+        }),
+      )
+
+      if (ok) logger.info(`Message publish on [confirm-email] queue`)
+      if (!ok) logger.error(`Error to publish message on [confirm-email] queue`)
+    }
     throw new BadRequestException(
       "Please check your email box and confirm account",
     )
   }
 
-  if (!account.password) {
-    throw new BadRequestException(
-      `Please login with ${account.provider} provider`,
-    )
-  }
-
-  const passwordMatch = comparePasswords(password, account.password)
+  const passwordMatch = await comparePasswords(password, user.password)
 
   if (!passwordMatch) {
     throw new BadRequestException("Invalid email or password")
   }
 
   const accessToken = signJwtToken({
-    userId: account.accountId,
+    userId: user.id,
   })
   const refreshToken = signJwtToken(
     {
-      userId: account.accountId,
+      userId: user.id,
     },
     refreshTokenSignOptions,
   )
@@ -68,16 +109,16 @@ export const loginByEmailService = async ({
   return {
     userAccount: {
       user: {
-        id: account.id,
-        userName: account.user_name,
-        bio: account.bio,
+        id: user.id,
+        userName: user.userName,
+        bio: user.bio,
+        email: user.email,
+        isEmailVerified: user.isEmailVerified,
       },
       account: {
-        id: account.accountId,
-        email: account.email,
-        avatarUrl: account.avatar_url,
-        isEmailVerified: account.is_email_verified,
-        provider: account.provider,
+        id: user.accounts[0].id,
+        provider: user.accounts[0].provider,
+        avatarUrl: user.accounts[0].avatarUrl,
       },
     },
     accessToken,

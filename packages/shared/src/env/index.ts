@@ -21,6 +21,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "prod"]).default("dev"),
   USER_PORT: z.coerce.number(),
   APP_ORIGEM: z.string().url(),
+  DATABASE_URL: z.string().url(),
   PREFIX_URL: z.string(),
   JWT_PUBLIC_SECRET: z.string(),
   JWT_EXPIRES_IN: expiresAtSchema,

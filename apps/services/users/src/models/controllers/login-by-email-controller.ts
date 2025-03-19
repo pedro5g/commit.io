@@ -14,6 +14,7 @@ export const loginByEmailController = asyncHandler(async (req, res) => {
     .setAuthCookies({ accessToken, refreshToken })
     .status(HTTP_STATUS.OK)
     .json({
+      ok: true,
       message: "User logged successfully",
       userAccount,
     })

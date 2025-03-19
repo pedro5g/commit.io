@@ -4,7 +4,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "test": "node --import tsx --test tests/*"
   },
   "dependencies": {
     "@commit.oi/shared": "*"
