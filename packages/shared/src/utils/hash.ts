@@ -12,7 +12,10 @@ export const passwordToHash = async (password: string) => {
   return `${salt}.${hash.toString("hex")}`
 }
 
-export const comparePasswords = async (password: string, passwordHash: string) => {
+export const comparePasswords = async (
+  password: string,
+  passwordHash: string,
+) => {
   const [salt, hash] = passwordHash.split(".")
   // hub -> hash under test
   const hub = (await promiseScrypt(password, salt, KEY_LEN)) as Buffer

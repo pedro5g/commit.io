@@ -5,13 +5,13 @@ import {
   express,
   globalErrorHandler,
   logger,
-  RMQMessagesService,
 } from "@commit.oi/shared"
 import { userRoutes } from "./routes"
 import {
   getAccessTokenCookieOptions,
   getRefreshTokenCookieOptions,
 } from "./utils"
+import { rmqMessageService } from "./broker"
 
 declare global {
   namespace Express {
@@ -46,10 +46,6 @@ app.use((req, res, next) => {
 app.use(`${PREFIX_URL}/user`, userRoutes)
 
 app.use(globalErrorHandler)
-
-export const rmqMessageService = new RMQMessagesService(
-  env.RABBITMQ_CONNECTION_URL,
-)
 
 app.listen(USER_PORT, async () => {
   await rmqMessageService.start()

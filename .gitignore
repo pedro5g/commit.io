@@ -131,3 +131,4 @@ dist
 
 data
 .rabbitmq_data
+.env.test

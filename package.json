@@ -22,7 +22,8 @@
     "lint:fix": "eslint . --fix",
     "migrate:dev": "npx prisma migrate dev --schema=prisma/schema.prisma -- -w packages/shared",
     "studio": "npx prisma studio -- -w packages/shared",
-    "test": "sh test.sh"
+    "test": "sh test.sh",
+    "test:user": "NODE_ENV=test node --import tsx --test -- -w apps/services/users/tests/*.test.ts"
   },
   "repository": {
     "type": "git",

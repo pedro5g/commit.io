@@ -27,7 +27,10 @@ export const refreshTokenSignOptions: SignOptsAndSecret = {
   secret: env.REFRESH_SECRET,
 }
 
-export const signJwtToken = (payload: AccessTokenPayload | RefreshTokenPayload, options?: SignOptsAndSecret) => {
+export const signJwtToken = (
+  payload: AccessTokenPayload | RefreshTokenPayload,
+  options?: SignOptsAndSecret,
+) => {
   const { secret, ...opts } = options || accessTokenSignOptions
   return jwt.sign(payload, secret, {
     ...defaults,
@@ -44,7 +47,8 @@ export const verifyJwtToken = <T extends object = AccessTokenPayload>(
     const payload = jwt.verify(token, secret, { ...defaults, ...opts }) as T
     return { payload }
   } catch (e: unknown) {
-    const message = e && typeof e === "object" && "message" in e ? e?.message : e
+    const message =
+      e && typeof e === "object" && "message" in e ? e?.message : e
     return {
       error: message,
     }

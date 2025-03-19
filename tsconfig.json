@@ -17,7 +17,7 @@
     }
   },
   "include": ["apps/services/**/*", "packages/**/*"],
-  "exclude": ["node_modules", "dist", "__test__"],
+  "exclude": ["node_modules", "dist", "__test__", "tests"],
   "references": [
     { "path": "./packages/shared" },
     { "path": "./apps/services/users" }
