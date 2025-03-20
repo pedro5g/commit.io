@@ -1,3 +1,5 @@
+import { env } from "../env"
+
 export const AuthProviders = {
   EMAIL: "EMAIL",
   GOOGLE: "GOOGLE",
@@ -13,6 +15,8 @@ export const EmailMethods = {
   SEND_EMAIL_VERIFY: "send-email-verify",
   SEND_PASSWORD_RESET: "send-password-reset",
 } as const
+
+export const REFRESH_PATH = `${env.PREFIX_URL}/auth/refresh` as const
 
 export type AuthProvidersType = keyof typeof AuthProviders
 export type CodesType = keyof typeof Codes

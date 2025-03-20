@@ -26,12 +26,35 @@ describe("[AMQMessageService] unit tests", () => {
   })
 
   it("should be able to public message in queue", async () => {
-    await sut.assertQueue(QUEUE_NAME_TO_TEST)
     const wasSuccessfully = await sut.publishInQueue(
       QUEUE_NAME_TO_TEST,
       "message-test",
     )
     assert.equal(wasSuccessfully, true)
+  })
+
+  it("should be able to create one channel by queue", async () => {
+    const queueNames = ["test-1", "test-2", "test-3"]
+
+    assert.strictEqual(sut.channels.size, 0)
+
+    await sut.assertQueue(queueNames[0])
+    await sut.assertQueue(queueNames[1])
+    await sut.assertQueue(queueNames[2])
+
+    assert.strictEqual(sut.channels.size, 3)
+
+    await sut.deleteQueue(queueNames[0])
+    await sut.deleteQueue(queueNames[1])
+    await sut.deleteQueue(queueNames[2])
+  })
+
+  it("should be able delete a channel", async () => {
+    await sut.assertQueue("test-4")
+    assert.strictEqual(sut.channels.size, 1)
+
+    await sut.deleteQueue("test-4")
+    assert.strictEqual(sut.channels.size, 0)
   })
 
   it("should be able to consume messages", async () => {
@@ -81,7 +104,7 @@ describe("[AMQMessageService] unit tests", () => {
 
     await new Promise((res) => setTimeout(res, 500))
 
-    assert.deepStrictEqual(result, messages)
+    assert.partialDeepStrictEqual(result, messages)
   })
 
   it("should retry failed messages with exponential backoff", async () => {

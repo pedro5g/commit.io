@@ -3,29 +3,41 @@ import { retry, RetryConfig } from "./lib"
 
 export class RMQMessagesService {
   private connection!: ChannelModel
-  public channel!: Channel
+  public channels = new Map<string, Channel>()
 
   constructor(private readonly uri: string) {}
 
   async start(): Promise<void> {
     this.connection = await connect(this.uri)
-    this.channel = await this.connection.createChannel()
   }
 
   async disconnect(): Promise<void> {
     this.connection.close()
   }
 
+  async getChannel(queue: string, opts?: object) {
+    if (!this.channels.has(queue)) {
+      const channel = await this.connection.createChannel()
+      await channel.assertQueue(queue, { ...opts, durable: true })
+      this.channels.set(queue, channel)
+    }
+    return this.channels.get(queue) as Channel
+  }
+
   async publishInQueue(queue: string, message: string, opts?: object) {
-    return this.channel.sendToQueue(queue, Buffer.from(message), opts)
+    const channel = await this.getChannel(queue)
+    return channel.sendToQueue(queue, Buffer.from(message), opts)
   }
 
   async assertQueue(queue: string, opts?: object) {
-    return this.channel.assertQueue(queue, opts)
+    const channel = await this.getChannel(queue)
+    return channel.assertQueue(queue, { ...opts, durable: true })
   }
 
   async deleteQueue(queue: string) {
-    await this.deleteQueue(queue)
+    const channel = await this.getChannel(queue)
+    await channel.deleteQueue(queue)
+    this.channels.delete(queue)
   }
 
   async consume(
@@ -33,8 +45,9 @@ export class RMQMessagesService {
     callback: (message: Message) => Promise<void>,
     config: RetryConfig,
   ) {
-    retry(this.channel, config)
-    this.channel.consume(queue, async (message) => {
+    const channel = await this.getChannel(queue)
+    retry(channel, config)
+    channel.consume(queue, async (message) => {
       if (!message) return
       await callback(message)
     })

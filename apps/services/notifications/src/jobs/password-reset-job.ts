@@ -1,20 +1,20 @@
 import { EmailMethods, logger, RMQMessagesService } from "@commit.oi/shared"
-import { confirmEmailService } from "../services"
+import { passwordResetService } from "../services"
 
-export const emailVerifyJob = async (messageService: RMQMessagesService) => {
-  await messageService.assertQueue(EmailMethods.SEND_EMAIL_VERIFY, {
+export const passwordResetJob = async (messageService: RMQMessagesService) => {
+  await messageService.assertQueue(EmailMethods.SEND_PASSWORD_RESET, {
     durable: true,
   })
 
   await messageService.consume(
-    EmailMethods.SEND_EMAIL_VERIFY,
+    EmailMethods.SEND_PASSWORD_RESET,
     async (message) => {
       const { email, url } = JSON.parse(message.content.toString()) as {
         email: string
         url: string
       }
 
-      await confirmEmailService({ email, url })
+      await passwordResetService({ email, url })
     },
     {
       initialDelay: 5000,

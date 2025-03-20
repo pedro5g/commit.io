@@ -4,6 +4,7 @@ import { comparePasswords, passwordToHash } from "../hash"
 
 describe("[HASH] unite test hasher functions", () => {
   test("[passwordToHash]", async () => {
+    assert(passwordToHash)
     const password = "password_123456"
     /**
      * should be able to encrypt any text to hasher
@@ -22,12 +23,13 @@ describe("[HASH] unite test hasher functions", () => {
     assert.notEqual(password, passwordHasher4)
     assert.notEqual(password, passwordHasher5)
 
-    assert(passwordToHash)
     assert.notEqual(passwordHasher2, passwordHasher1)
     assert.notEqual(passwordHasher3, passwordHasher2)
     assert.notEqual(passwordHasher1, passwordHasher3)
     assert.notEqual(passwordHasher5, passwordHasher4)
     assert.notEqual(passwordHasher2, passwordHasher5)
+
+    assert.strictEqual(passwordHasher1.split(".").length, 2)
   })
 
   test("[comparePassword]", async () => {

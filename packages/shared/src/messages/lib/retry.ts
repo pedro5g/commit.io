@@ -60,12 +60,10 @@ export const retry = (channel: Channel, config: RetryConfig = DEFAULTS) => {
       try {
         const headers = msg.properties.headers || {}
         const retryCount = (headers["x-retries"] || 0) + 1
-        console.log("x-retries", headers["x-retries"])
         if (retryCount >= config.maxRetries) {
           channel.reject(msg, false)
           config.onFailed(error)
         } else {
-          console.log("retryCount", retryCount)
           headers["x-retries"] = retryCount
           const updatedProperties: Options.Publish = {
             ...msg.properties,

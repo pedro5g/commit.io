@@ -1,4 +1,4 @@
-import { add, env, express } from "@commit.oi/shared"
+import { add, env, express, REFRESH_PATH } from "@commit.oi/shared"
 import { randomUUID } from "node:crypto"
 
 export function calculateExpirationDate(expiresIn: string): Date {
@@ -28,7 +28,7 @@ const defaults: express.CookieOptions = {
 export function getRefreshTokenCookieOptions(): express.CookieOptions {
   const expiresIn = env.REFRESH_EXPIRES_IN
   const expires = calculateExpirationDate(expiresIn)
-  return { ...defaults, expires, path: "/" }
+  return { ...defaults, expires, path: REFRESH_PATH }
 }
 export function getAccessTokenCookieOptions(): express.CookieOptions {
   const expiresIn = env.JWT_EXPIRES_IN

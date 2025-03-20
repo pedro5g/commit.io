@@ -1,4 +1,4 @@
-@baseURL = http://localhost:3000/api/v1/user
+@baseURL = http://localhost:8080/api/v1/user
 
 ### @name register_by_email
 POST {{baseURL}}/register/email
@@ -6,17 +6,37 @@ Content-Type: application/json
 
 {
     "userName": "pedro",
-    "email": "test@gmail.com",
+    "email": "test321@gmail.com",
     "password": "123456"
 }
 
+### @name confirm_email
+PUT {{baseURL}}/verify/email?code=affa5683a8
+Content-Type: application/json
+
 
 ### @name login_by_email
-
 POST {{baseURL}}/login
 Content-Type: application/json
 
 {
-    "email": "pedluiz321@gmail.com",
-    "password": "123456"
+    "email": "test321@gmail.com",
+    "password": "password"
+}
+
+### @name password_forget
+PATCH {{baseURL}}/password-forget
+Content-Type: application/json
+
+{
+    "email": "test321@gmail.com"
+}
+
+### @name reset_password
+PATCH {{baseURL}}/reset-password
+Content-Type: application/json
+
+{
+    "code": "d14f1446c1",
+    "password": "password"
 }

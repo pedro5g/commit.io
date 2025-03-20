@@ -3,6 +3,8 @@ import { HTTP_STATUS } from "../utils/http-status"
 import z from "zod"
 import { AppError } from "../exceptions"
 import { logger } from "../logger"
+import { REFRESH_PATH } from "../constants"
+import { clearAuthenticationCookies } from "../utils/clear-cookies"
 
 const formatZodError = (res: Response, error: z.ZodError) => {
   const errors = error.issues.map((err) => ({
@@ -22,6 +24,10 @@ export const globalErrorHandler: ErrorRequestHandler = (
   _next,
 ) => {
   logger.error(`Error on PATH: ${req.path}`)
+
+  if (req.path === REFRESH_PATH) {
+    clearAuthenticationCookies(res)
+  }
 
   if (error instanceof SyntaxError) {
     res.status(HTTP_STATUS.BAD_REQUEST).json({
