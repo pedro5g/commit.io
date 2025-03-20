@@ -41,3 +41,8 @@ export function minutesFromNow(minutes: number = 45): Date {
 
   return add(now, { minutes })
 }
+
+export function minutesAgo(minutes: number = 3): Date {
+  const now = new Date()
+  return add(now, { minutes: -minutes })
+}
