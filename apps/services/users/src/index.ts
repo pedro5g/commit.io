@@ -5,24 +5,12 @@ import {
   express,
   globalErrorHandler,
   logger,
-} from "@commit.oi/shared"
-import { userRoutes } from "./routes"
-import {
   getAccessTokenCookieOptions,
   getRefreshTokenCookieOptions,
-} from "./utils"
+  requestLogger,
+} from "@commit.oi/shared"
+import { userRoutes } from "./routes"
 import { rmqMessageService } from "./broker"
-
-declare global {
-  namespace Express {
-    export interface Response {
-      setAuthCookies: (data: {
-        accessToken: string
-        refreshToken: string
-      }) => express.Response
-    }
-  }
-}
 
 const { USER_PORT, APP_ORIGEM, NODE_ENV, PREFIX_URL } = env
 
@@ -36,13 +24,16 @@ app.use(cookieParser())
 app.use((req, res, next) => {
   res.setAuthCookies = ({ accessToken, refreshToken }) => {
     res
-      .cookie("assessToken", accessToken, getAccessTokenCookieOptions())
+      .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
       .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions())
 
     return res
   }
   next()
 })
+
+app.use(requestLogger)
+
 app.use(`${PREFIX_URL}/user`, userRoutes)
 
 app.use(globalErrorHandler)

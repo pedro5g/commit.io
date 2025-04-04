@@ -98,10 +98,14 @@ export const loginByEmailService = async ({
 
   const accessToken = signJwtToken({
     userId: user.id,
+    name: user.userName,
+    email: user.email,
+    accountProvider: "EMAIL",
   })
   const refreshToken = signJwtToken(
     {
       userId: user.id,
+      accountProvider: "EMAIL",
     },
     refreshTokenSignOptions,
   )

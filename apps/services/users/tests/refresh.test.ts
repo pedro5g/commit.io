@@ -53,7 +53,12 @@ describe("[Refresh service] tests", () => {
 
   it("Should not be able to request new assessToken and refreshToken with a invalid refreshToken", async () => {
     const invalidRefreshToken = signJwtToken(
-      { userId: "fake_id" },
+      {
+        userId: "fake_id",
+        name: "test",
+        accountProvider: "EMAIL",
+        email: "test@email",
+      },
       { ...refreshTokenSignOptions, expiresIn: "1Millisecond" },
     )
 

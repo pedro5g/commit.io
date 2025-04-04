@@ -1,12 +1,17 @@
 import jwt, { SignOptions, VerifyOptions } from "jsonwebtoken"
 import { env } from "../env"
+import { AuthProvidersType } from "../constants"
 
 export type AccessTokenPayload = {
   userId: string
+  name: string
+  email: string
+  accountProvider: AuthProvidersType
 }
 
 export type RefreshTokenPayload = {
   userId: string
+  accountProvider: AuthProvidersType
 }
 
 type SignOptsAndSecret = SignOptions & {

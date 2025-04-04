@@ -4,7 +4,7 @@ import z from "zod"
 import { AppError } from "../exceptions"
 import { logger } from "../logger"
 import { REFRESH_PATH } from "../constants"
-import { clearAuthenticationCookies } from "../utils/clear-cookies"
+import { clearAuthenticationCookies } from "../utils/cookies"
 
 const formatZodError = (res: Response, error: z.ZodError) => {
   const errors = error.issues.map((err) => ({
@@ -23,8 +23,6 @@ export const globalErrorHandler: ErrorRequestHandler = (
   res,
   _next,
 ) => {
-  logger.error(`Error on PATH: ${req.path}`)
-
   if (req.path === REFRESH_PATH) {
     clearAuthenticationCookies(res)
   }

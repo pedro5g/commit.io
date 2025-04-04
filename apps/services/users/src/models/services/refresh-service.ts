@@ -1,4 +1,5 @@
 import {
+  ErrorCode,
   NotFoundException,
   prisma,
   refreshTokenSignOptions,
@@ -14,7 +15,10 @@ export const refreshService = async ({ refreshToken }: RefreshDTO) => {
   })
 
   if (!payload) {
-    throw new UnauthorizedException("Invalid refresh token")
+    throw new UnauthorizedException(
+      "Invalid refresh token",
+      ErrorCode.AUTH_INVALID_TOKEN,
+    )
   }
 
   const user = await prisma.user.findUnique({
@@ -30,11 +34,15 @@ export const refreshService = async ({ refreshToken }: RefreshDTO) => {
   const newRefreshToken = signJwtToken(
     {
       userId: user.id,
+      name: user.userName,
+      email: user.email,
+      accountProvider: payload.accountProvider,
     },
     refreshTokenSignOptions,
   )
   const accessToken = signJwtToken({
     userId: user.id,
+    accountProvider: payload.accountProvider,
   })
 
   return {
