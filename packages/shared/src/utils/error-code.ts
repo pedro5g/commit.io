@@ -19,6 +19,7 @@ export const ErrorCode = {
   // System Errors
   INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
   VERIFICATION_ERROR: "VERIFICATION_ERROR",
-} as const;
+  ALREADY_USED: "ALREADY_USED",
+} as const
 
-export type ErrorCodeType = keyof typeof ErrorCode;
+export type ErrorCodeType = keyof typeof ErrorCode

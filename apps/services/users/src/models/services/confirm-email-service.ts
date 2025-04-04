@@ -1,4 +1,10 @@
-import { BadRequestException, Codes, logger, prisma } from "@commit.oi/shared"
+import {
+  BadRequestException,
+  Codes,
+  ErrorCode,
+  logger,
+  prisma,
+} from "@commit.oi/shared"
 import { ConfirmEmailDTO } from "../dtos/confirm-email-dto"
 
 export const confirmEmailService = async ({ code }: ConfirmEmailDTO) => {
@@ -7,7 +13,10 @@ export const confirmEmailService = async ({ code }: ConfirmEmailDTO) => {
   })
 
   if (!verifyCode) {
-    throw new BadRequestException("Email already verified")
+    throw new BadRequestException(
+      "Email already verified",
+      ErrorCode.ALREADY_USED,
+    )
   }
 
   try {

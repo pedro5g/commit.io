@@ -13,6 +13,12 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...tailwind.configs["flat/recommended"],
+  {
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+      "tailwindcss/no-custom-classname": "off",
+    },
+  },
 ]
 
 export default eslintConfig

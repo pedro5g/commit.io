@@ -66,6 +66,7 @@ export const passwordForgetService = async ({ email }: PasswordForgetDTO) => {
     }
     throw new BadRequestException(
       "Please check your email box and confirm account",
+      ErrorCode.VERIFICATION_ERROR,
     )
   }
 
