@@ -4,10 +4,13 @@ import {
   ForgetPasswordBodyType,
   ForgetPasswordResponseType,
   GetProfileResponseType,
+  LogOutResponseType,
   RegisterUserBodyType,
   RegisterUserResponseType,
   ResetPasswordBodyType,
   ResetPasswordResponseType,
+  UpdateUserProfileBodyType,
+  UpdateUserProfileResponseType,
 } from "./types"
 
 const USER_API_URL = process.env.NEXT_PUBLIC_USER_API_URL
@@ -39,3 +42,14 @@ export const resetPasswordApi = async <B = ResetPasswordBodyType>(body: B) =>
 
 export const getProfileApi = async () =>
   await requester.GET<GetProfileResponseType>(`${USER_API_URL}/profile`)
+
+export const updateUserProfileApi = async <B = UpdateUserProfileBodyType>(
+  body: B,
+) =>
+  await requester.PUT<UpdateUserProfileResponseType, B>(
+    `${USER_API_URL}/profile/update`,
+    body,
+  )
+
+export const logOutApi = async () =>
+  await requester.GET<LogOutResponseType>(`${USER_API_URL}/log-out`)

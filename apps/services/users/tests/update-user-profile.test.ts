@@ -8,13 +8,14 @@ import {
 import assert from "node:assert"
 import { profileService } from "../src/models/services/profile-service"
 import "./test-setup"
+import { updateUserProfileService } from "../src/models/services/update-user-profile"
 
-describe("[Profile service] tests", () => {
-  it("Should be able to get user with current account infos", async () => {
+describe("[Update user profile service] tests", () => {
+  it("Should be able to update user profile", async () => {
     assert(profileService)
     const testData = {
       userName: "jhon doe",
-      email: "email7@gmail.com",
+      email: "email8@gmail.com",
       password: "test_123",
     }
     await prisma.$transaction(async (ctx) => {
@@ -42,23 +43,27 @@ describe("[Profile service] tests", () => {
     })
 
     assert(user)
+    assert.strictEqual(user.bio, null)
 
-    const { userAccount } = await profileService({
-      userId: user.id,
-      accountProvider: "EMAIL",
+    const { userUpdated } = await updateUserProfileService({
+      id: user.id,
+      userName: "name_updated",
+      bio: "bio_updated",
     })
 
-    assert(userAccount)
-    assert(userAccount.user)
-    assert(userAccount.account)
-    assert.strictEqual(userAccount.account.provider, "EMAIL")
+    assert(userUpdated)
+    assert(userUpdated.bio)
+    assert.strictEqual(userUpdated.bio, "bio_updated")
+    assert.strictEqual(userUpdated.userName, "name_updated")
   })
 
-  it("Should not be able to get user and current account with id don't exists", async () => {
-    const error = await profileService({
-      userId: "fake_id",
-      accountProvider: "EMAIL",
+  it("Should not be able to updated with invalid id", async () => {
+    const error = await updateUserProfileService({
+      id: "fake_id",
+      userName: "name_updated",
+      bio: "bio_updated",
     }).catch((error) => error)
+
     assert(error)
     assert.strictEqual(error instanceof NotFoundException, true)
     assert.strictEqual(error.message, "User not found")

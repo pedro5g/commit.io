@@ -6,6 +6,8 @@ import { passwordForgetController } from "../models/controllers/password-forget-
 import { resetPasswordController } from "../models/controllers/reset-password-controller"
 import { refreshController } from "../models/controllers/refresh-controller"
 import { profileController } from "../models/controllers/profile-controller"
+import { updateUserProfileController } from "../models/controllers/update-user-profile-controller"
+import { logOutController } from "../models/controllers/log-out-controller"
 
 const userRoutes = Router()
 
@@ -15,7 +17,9 @@ userRoutes.get("/auth/refresh", refreshController)
 userRoutes.put("/verify/email", confirmEmailController)
 userRoutes.patch("/password-forget", passwordForgetController)
 userRoutes.patch("/reset-password", resetPasswordController)
+userRoutes.get("/log-out", isAuthenticated, logOutController)
 
 userRoutes.get("/profile", isAuthenticated, profileController)
+userRoutes.put("/profile/update", isAuthenticated, updateUserProfileController)
 
 export { userRoutes }

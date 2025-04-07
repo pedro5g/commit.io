@@ -60,4 +60,13 @@ export class CookieParser {
 
     return cookies
   }
+
+  static fromEntries(cookies: Cookie[]) {
+    const obj: Record<string, Cookie> = {}
+    cookies.forEach((cookie) => {
+      obj[cookie.key] = cookie
+    })
+
+    return obj
+  }
 }

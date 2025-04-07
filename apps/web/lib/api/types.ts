@@ -82,3 +82,13 @@ export type ResetPasswordResponseType = BaseResponseType
 export type GetProfileResponseType = BaseResponseType<{
   userAccount: UserAccount
 }>
+
+export type UpdateUserProfileBodyType = {
+  userName: string
+  bio: string
+}
+export type UpdateUserProfileResponseType = BaseResponseType<
+  UserAccount["user"]
+>
+
+export type LogOutResponseType = BaseResponseType
